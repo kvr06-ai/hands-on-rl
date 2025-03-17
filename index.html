@@ -216,13 +216,14 @@
         
         // Function to initialize section content loading
         function initArticle() {
-            // Load section content when the page is loaded
-            loadArticleSection('section-1', 'article_sections/article_section_1.html');
-            loadArticleSection('section-2', 'article_sections/article_section_2.html');
+            // Load each section of the article
+            loadArticleSection('section-1', 'article_sections/section_1.html');
+            loadArticleSection('section-2', 'article_sections/section_2.html');
             loadArticleSection('section-3', 'article_sections/section_3.html');
             loadArticleSection('section-4', 'article_sections/section_4.html');
             loadArticleSection('section-5', 'article_sections/section_5.html');
             loadArticleSection('section-6', 'article_sections/section_6.html');
+            loadArticleSection('section-7', 'article_sections/section_7.html');
             
             // Handle navigation clicks
             document.querySelectorAll('nav a').forEach(link => {
@@ -252,8 +253,8 @@
                 <li><a href="#section-3">The Classic Benchmarks: CartPole and Beyond</a></li>
                 <li><a href="#section-4">Atari Learning Environment: The Deep RL Revolution</a></li>
                 <li><a href="#section-5">Continuous Control: Entering the Robotics Domain</a></li>
-                <li><a href="#section-6" class="current-section">MuJoCo Physics: Advanced Simulation for Robotics</a></li>
-                <li><a href="#section-7">Multi-Agent Environments: From Competition to Cooperation</a></li>
+                <li><a href="#section-6">MuJoCo Physics: Advanced Simulation for Robotics</a></li>
+                <li><a href="#section-7" class="current-section">Multi-Agent Environments: From Competition to Cooperation</a></li>
                 <li><a href="#section-8">Procedural Generation and Generalization</a></li>
                 <li><a href="#section-9">Simulation-to-Real Transfer: Bridging the Reality Gap</a></li>
                 <li><a href="#section-10">The Cutting Edge: Modern Simulation Platforms</a></li>
@@ -296,6 +297,11 @@
                 
                 <!-- Section 6: MuJoCo Physics -->
                 <div id="section-6" class="article-section">
+                    <!-- Content will be loaded via JavaScript -->
+                </div>
+                
+                <!-- Section 7: Multi-Agent Environments -->
+                <div id="section-7" class="article-section">
                     <!-- Content will be loaded via JavaScript -->
                 </div>
                 
