@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reinforcement Learning Environments: From CartPole to MuJoCo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            min-height: 100vh;
+        }
+        .container {
+            display: flex;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .sidebar {
+            width: 250px;
+            background-color: #f8f9fa;
+            padding: 20px;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+        }
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            max-width: 800px;
+        }
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 0.5em;
+        }
+        h2 {
+            color: #3498db;
+            margin-top: 1.5em;
+            margin-bottom: 0.5em;
+        }
+        h3 {
+            color: #2980b9;
+            margin-top: 1.2em;
+        }
+        code {
+            background-color: #f5f5f5;
+            padding: 2px 4px;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+        pre {
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 5px;
+            overflow: auto;
+            line-height: 1.4;
+        }
+        a {
+            color: #3498db;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .article-section {
+            margin-bottom: 40px;
+        }
+        blockquote {
+            border-left: 5px solid #3498db;
+            padding-left: 20px;
+            margin-left: 0;
+            color: #555;
+            font-style: italic;
+        }
+        nav ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+        nav li {
+            margin-bottom: 10px;
+        }
+        nav a {
+            display: block;
+            padding: 8px;
+            border-radius: 5px;
+            transition: background-color 0.2s;
+        }
+        nav a:hover {
+            background-color: #e9ecef;
+        }
+        .current-section {
+            font-weight: bold;
+            background-color: #e9ecef;
+        }
+        .visual-container {
+            margin: 30px 0;
+            text-align: center;
+        }
+        .rl-diagram {
+            max-width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        footer {
+            padding: 20px;
+            text-align: center;
+            background-color: #f8f9fa;
+            margin-top: 40px;
+        }
+        .interactive-demo {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 30px 0;
+            background-color: #f8f9fa;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <aside class="sidebar">
+            <h3>Navigation</h3>
+            <nav>
+                <ul>
+                    <li><a href="#section-1" class="current-section">1. Introduction</a></li>
+                    <li><a href="#section-2">2. RL Fundamentals</a></li>
+                    <li><a href="#section-3">3. Classic Benchmarks</a></li>
+                    <li><a href="#section-4">4. Atari Learning</a></li>
+                    <li><a href="#section-5">5. Continuous Control</a></li>
+                    <li><a href="#section-6">6. MuJoCo Physics</a></li>
+                    <li><a href="#section-7">7. Multi-Agent Environments</a></li>
+                    <li><a href="#section-8">8. Procedural Generation</a></li>
+                    <li><a href="#section-9">9. Sim-to-Real Transfer</a></li>
+                    <li><a href="#section-10">10. Modern Platforms</a></li>
+                    <li><a href="#section-11">11. Building Your Own</a></li>
+                    <li><a href="#section-12">12. Conclusion</a></li>
+                </ul>
+            </nav>
+        </aside>
+        
+        <div class="main-content">
+            <header>
+                <h1>Reinforcement Learning Environments: From CartPole to MuJoCo</h1>
+                <p><em>An exploration of the simulation landscapes that shape artificial intelligence</em></p>
+            </header>
+            
+            <main id="article-content">
+                <!-- Section 1: Introduction -->
+                <div id="section-1" class="article-section">
+                    <h2>1. Introduction: The Simulation Frontier of AI</h2>
+                    
+                    <blockquote>
+                        "How do we teach AI to walk before it can run? Through carefully designed virtual playgrounds that challenge and shape machine intelligence."
+                    </blockquote>
+                    
+                    <!-- Visual Hook -->
+                    <div class="visual-container">
+                        <img src="images/rl_cycle.gif" alt="Reinforcement Learning Agent-Environment Interaction Loop" class="rl-diagram">
+                        <p><em>Reinforcement Learning cycle: agent interacts with environment through actions, receives states and rewards</em></p>
+                    </div>
+                    
+                    <p>
+                        <a href="https://en.wikipedia.org/wiki/Reinforcement_learning" target="_blank">Reinforcement Learning (RL)</a> represents one of the most promising frontiers in artificial intelligence, enabling machines to learn optimal behavior through interaction with their environment. Unlike <a href="https://en.wikipedia.org/wiki/Supervised_learning" target="_blank">supervised learning</a>, which requires labeled examples, RL agents learn from direct experience and feedback. This paradigm has led to breakthroughs like <a href="https://www.deepmind.com/research/highlighted-research/alphago" target="_blank">AlphaGo</a> defeating world champions and <a href="https://www.science.org/doi/10.1126/scirobotics.aaw6326" target="_blank">robots that can perform complex manipulation tasks</a>. However, the path to these achievements is paved with carefully designed <a href="https://spinningup.openai.com/en/latest/spinningup/rl_intro.html#what-can-rl-do" target="_blank">simulation environments</a> that act as both training grounds and benchmarks.
+                    </p>
+                    
+                    <p>
+                        At the core of reinforcement learning lie three fundamental challenges that every algorithm must overcome. First, <strong><a href="https://lilianweng.github.io/posts/2020-06-07-exploration-drl/" target="_blank">exploration</a></strong> requires agents to discover effective strategies in vast state spaces where random actions are unlikely to yield success. According to a <a href="https://arxiv.org/abs/2102.06587" target="_blank">2021 study by OpenAI</a>, efficient exploration remains one of the biggest bottlenecks in applying RL to real-world problems, with random exploration becoming exponentially less effective as task complexity increases. Second, <strong><a href="https://en.wikipedia.org/wiki/Temporal_difference_learning" target="_blank">credit assignment</a></strong> involves determining which actions in a sequence contributed to eventual success or failure, especially when rewards are delayed. Third, <strong><a href="https://arxiv.org/abs/1810.12282" target="_blank">generalization</a></strong> challenges agents to apply learned policies to novel situations—a capability that humans excel at but machines struggle with. Data from <a href="https://arxiv.org/abs/1901.07927" target="_blank">DeepMind</a> shows that even state-of-the-art RL agents often fail dramatically when faced with small variations in their environment.
+                    </p>
+                    
+                    <p>
+                        Environments in reinforcement learning serve a dual purpose that makes them critically important. As Stanford professor <a href="https://cs.stanford.edu/people/ebrun/" target="_blank">Emma Brunskill</a> notes, "The right environment is both a teacher and a test, revealing an algorithm's true capabilities and limitations." On one hand, they provide the structured <a href="https://arxiv.org/abs/1709.10089" target="_blank">feedback necessary for agents to learn</a>, with reward functions that shape behavior toward desired goals. On the other hand, they establish standardized challenges that allow researchers to <a href="https://paperswithcode.com/area/reinforcement-learning" target="_blank">benchmark algorithms against each other</a>. The <a href="https://www.gymlibrary.dev/" target="_blank">Gymnasium library</a> (formerly OpenAI Gym) exemplifies this approach, offering a collection of environments with <a href="https://gymnasium.farama.org/api/env/" target="_blank">consistent interfaces</a> that have become the de facto standard for RL research. Since its introduction in 2016, papers referencing Gym/Gymnasium environments have increased by 300% according to <a href="https://arxiv.org/search/advanced?advanced=&terms-0-operator=AND&terms-0-term=openai+gym&terms-0-field=all&classification-physics_archives=all&classification-include_cross_list=include&date-filter_by=all_dates&date-year=&date-from_date=&date-to_date=&date-date_type=submitted_date&abstracts=show&size=50&order=-announced_date_first" target="_blank">arXiv statistics</a>, highlighting the community's recognition of standardized benchmarks as essential for meaningful progress.
+                    </p>
+                    
+                    <p>
+                        Our journey through reinforcement learning environments will take us from simple physics simulations like <a href="https://gymnasium.farama.org/environments/classic_control/cart_pole/" target="_blank">CartPole</a>, where a pole must be balanced on a movable cart, to complex robotics simulators like <a href="https://mujoco.org/" target="_blank">MuJoCo</a> that model realistic physical interactions. Along the way, we'll explore how the evolution of these environments has driven algorithmic innovation and expanded the capabilities of artificial intelligence. The <a href="https://github.com/mgbellemare/Arcade-Learning-Environment" target="_blank">Arcade Learning Environment</a>, for instance, pushed researchers to develop algorithms that could learn directly from high-dimensional pixel inputs, leading to the birth of <a href="https://www.deepmind.com/publications/playing-atari-with-deep-reinforcement-learning" target="_blank">deep reinforcement learning with DQN</a> in 2013. Similarly, continuous control environments spurred the development of <a href="https://spinningup.openai.com/en/latest/algorithms/ppo.html" target="_blank">policy gradient methods</a> capable of handling large, continuous action spaces. By understanding these environments, we gain insight not just into how machines learn but also into the fundamental nature of intelligence itself.
+                    </p>
+                    
+                    <!-- Simple Interactive Element -->
+                    <div class="interactive-demo">
+                        <h3>Interactive Demo: The RL Framework</h3>
+                        <p>Coming soon: An interactive visualization of the reinforcement learning process</p>
+                    </div>
+                </div>
+                
+                <!-- Additional sections will be added here as they are completed -->
+            </main>
+            
+            <footer>
+                <p>Hands-on Reinforcement Learning</p>
+            </footer>
+        </div>
+    </div>
+</body>
+</html> 
