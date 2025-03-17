@@ -1,0 +1,4 @@
+
+# Article development files that don't need to be in version control
+/article_sections/
+/images/
