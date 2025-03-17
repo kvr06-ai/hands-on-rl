@@ -7,7 +7,7 @@ import socketserver
 import webbrowser
 from pathlib import Path
 
-PORT = 8000
+PORT = 8001
 
 class Handler(http.server.SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
