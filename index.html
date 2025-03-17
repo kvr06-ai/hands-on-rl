@@ -224,6 +224,7 @@
             loadArticleSection('section-5', 'article_sections/section_5.html');
             loadArticleSection('section-6', 'article_sections/section_6.html');
             loadArticleSection('section-7', 'article_sections/section_7.html');
+            loadArticleSection('section-8', 'article_sections/section_8.html');
             
             // Handle navigation clicks
             document.querySelectorAll('nav a').forEach(link => {
@@ -237,6 +238,24 @@
                     this.classList.add('current-section');
                 });
             });
+            
+            // Set current section based on URL hash on page load
+            function setCurrentSectionFromHash() {
+                const hash = window.location.hash || '#section-1';
+                const navLink = document.querySelector(`nav a[href="${hash}"]`);
+                if (navLink) {
+                    document.querySelectorAll('nav a').forEach(l => {
+                        l.classList.remove('current-section');
+                    });
+                    navLink.classList.add('current-section');
+                }
+            }
+            
+            // Call once on load
+            setCurrentSectionFromHash();
+            
+            // Listen for hash changes
+            window.addEventListener('hashchange', setCurrentSectionFromHash);
         }
         
         // Initialize when the DOM is fully loaded
@@ -254,7 +273,7 @@
                 <li><a href="#section-4">Atari Learning Environment: The Deep RL Revolution</a></li>
                 <li><a href="#section-5">Continuous Control: Entering the Robotics Domain</a></li>
                 <li><a href="#section-6">MuJoCo Physics: Advanced Simulation for Robotics</a></li>
-                <li><a href="#section-7" class="current-section">Multi-Agent Environments: From Competition to Cooperation</a></li>
+                <li><a href="#section-7">Multi-Agent Environments: From Competition to Cooperation</a></li>
                 <li><a href="#section-8">Procedural Generation and Generalization</a></li>
                 <li><a href="#section-9">Simulation-to-Real Transfer: Bridging the Reality Gap</a></li>
                 <li><a href="#section-10">The Cutting Edge: Modern Simulation Platforms</a></li>
@@ -302,6 +321,11 @@
                 
                 <!-- Section 7: Multi-Agent Environments -->
                 <div id="section-7" class="article-section">
+                    <!-- Content will be loaded via JavaScript -->
+                </div>
+                
+                <!-- Section 8: Procedural Generation and Generalization -->
+                <div id="section-8" class="article-section">
                     <!-- Content will be loaded via JavaScript -->
                 </div>
                 
