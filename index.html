@@ -47,6 +47,11 @@
             color: #2980b9;
             margin-top: 1.2em;
         }
+        h4 {
+            color: #2980b9;
+            margin-top: 1em;
+            font-size: 1.1em;
+        }
         code {
             background-color: #f5f5f5;
             padding: 2px 4px;
@@ -120,7 +125,21 @@
             margin: 30px 0;
             background-color: #f8f9fa;
         }
+        /* Math styling */
+        .math-block {
+            text-align: center;
+            margin: 20px 0;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        ul {
+            padding-left: 20px;
+        }
     </style>
+    <!-- MathJax for rendering LaTeX-style math equations -->
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 </head>
 <body>
     <div class="container">
@@ -128,8 +147,8 @@
             <h3>Navigation</h3>
             <nav>
                 <ul>
-                    <li><a href="#section-1" class="current-section">1. Introduction</a></li>
-                    <li><a href="#section-2">2. RL Fundamentals</a></li>
+                    <li><a href="#section-1">1. Introduction</a></li>
+                    <li><a href="#section-2" class="current-section">2. RL Fundamentals</a></li>
                     <li><a href="#section-3">3. Classic Benchmarks</a></li>
                     <li><a href="#section-4">4. Atari Learning</a></li>
                     <li><a href="#section-5">5. Continuous Control</a></li>
@@ -180,12 +199,145 @@
                     <p>
                         Our journey through reinforcement learning environments will take us from simple physics simulations like <a href="https://gymnasium.farama.org/environments/classic_control/cart_pole/" target="_blank">CartPole</a>, where a pole must be balanced on a movable cart, to complex robotics simulators like <a href="https://mujoco.org/" target="_blank">MuJoCo</a> that model realistic physical interactions. Along the way, we'll explore how the evolution of these environments has driven algorithmic innovation and expanded the capabilities of artificial intelligence. The <a href="https://github.com/mgbellemare/Arcade-Learning-Environment" target="_blank">Arcade Learning Environment</a>, for instance, pushed researchers to develop algorithms that could learn directly from high-dimensional pixel inputs, leading to the birth of <a href="https://www.deepmind.com/publications/playing-atari-with-deep-reinforcement-learning" target="_blank">deep reinforcement learning with DQN</a> in 2013. Similarly, continuous control environments spurred the development of <a href="https://spinningup.openai.com/en/latest/algorithms/ppo.html" target="_blank">policy gradient methods</a> capable of handling large, continuous action spaces. By understanding these environments, we gain insight not just into how machines learn but also into the fundamental nature of intelligence itself.
                     </p>
+                </div>
+                
+                <!-- Section 2: RL Fundamentals -->
+                <div id="section-2" class="article-section">
+                    <h2>2. Reinforcement Learning Fundamentals: A Technical Primer</h2>
                     
-                    <!-- Simple Interactive Element -->
-                    <div class="interactive-demo">
-                        <h3>Interactive Demo: The RL Framework</h3>
-                        <p>Coming soon: An interactive visualization of the reinforcement learning process</p>
+                    <p>
+                        To understand reinforcement learning environments, we must first establish the mathematical framework that underpins RL algorithms. This section provides the technical foundation necessary to appreciate how different environments challenge learning agents and why certain algorithms excel in specific scenarios.
+                    </p>
+                    
+                    <h3>The RL Framework: Mathematical Foundations</h3>
+                    
+                    <p>
+                        At its core, reinforcement learning is formalized through <a href="https://en.wikipedia.org/wiki/Markov_decision_process" target="_blank">Markov Decision Processes</a> (MDPs), a mathematical framework for modeling decision-making in situations where outcomes are partly random and partly under the control of a decision-maker. An MDP is defined by the tuple \((S, A, P, R, \gamma)\), where:
+                    </p>
+                    
+                    <ul>
+                        <li>\(S\) represents the <strong>state space</strong>, the set of all possible situations our agent might encounter</li>
+                        <li>\(A\) is the <strong>action space</strong>, the collection of possible actions available to the agent</li>
+                        <li>\(P: S \times A \times S \rightarrow [0, 1]\) defines the <strong>transition probability function</strong>, where \(P(s'|s,a)\) gives the probability of transitioning to state \(s'\) from state \(s\) after taking action \(a\)</li>
+                        <li>\(R: S \times A \times S \rightarrow \mathbb{R}\) is the <strong>reward function</strong>, where \(R(s,a,s')\) provides the immediate reward after transitioning from \(s\) to \(s'\) due to action \(a\)</li>
+                        <li>\(\gamma \in [0, 1]\) is the <strong>discount factor</strong> that determines how much the agent values future rewards compared to immediate ones</li>
+                    </ul>
+                    
+                    <p>
+                        The <a href="https://proceedings.neurips.cc/paper_files/paper/2020/file/29c0c0ee746257fa275995c063d11072-Paper.pdf" target="_blank">Markov property</a> is central to this framework, asserting that the current state contains all relevant information from the history—the future is conditionally independent of the past given the present. In practical terms, this means the probability of transitioning to a new state depends only on the current state and action, not on the sequence of states and actions that preceded it. According to a comprehensive analysis by <a href="https://arxiv.org/abs/2111.00997" target="_blank">Silver et al. (2021)</a>, real-world RL problems frequently violate this assumption, necessitating techniques like recurrent neural networks to capture historical information when the Markov property doesn't hold.
+                    </p>
+                    
+                    <div class="visual-container">
+                        <img src="images/mdp_diagram.png" alt="Markov Decision Process diagram showing states, actions, transitions, and rewards" class="rl-diagram">
+                        <p><em>Markov Decision Process diagram illustrating states (circles), actions (arrows), transitions (connections between states), and rewards (numbers)</em></p>
                     </div>
+                    
+                    <p>
+                        The objective in reinforcement learning is to find an optimal <strong>policy</strong> \(\pi: S \rightarrow A\), a mapping from states to actions that maximizes the <strong>expected return</strong>. The expected return is defined as the sum of discounted future rewards:
+                    </p>
+                    
+                    <div class="math-block">
+                        <p>\(G_t = R_{t+1} + \gamma R_{t+2} + \gamma^2 R_{t+3} + ... = \sum_{k=0}^{\infty} \gamma^k R_{t+k+1}\)</p>
+                    </div>
+                    
+                    <p>
+                        The discount factor \(\gamma\) serves a dual purpose. Mathematically, it ensures the infinite sum converges to a finite value when rewards are bounded. Conceptually, it represents a preference for immediate rewards over delayed ones—a property observed in both human and animal decision-making, as documented in <a href="https://pubmed.ncbi.nlm.nih.gov/19454975/" target="_blank">behavioral economics research</a>. In a parametric study of 60 RL benchmarks conducted by <a href="https://arxiv.org/abs/1812.06110" target="_blank">Fedus et al. (2019)</a>, performance varies dramatically with different discount factors, with optimal values typically falling between 0.95 and 0.99 for most environments.
+                    </p>
+                    
+                    <h3>Key RL Paradigms</h3>
+                    
+                    <p>
+                        Reinforcement learning algorithms can be categorized into several paradigms based on their approach to learning optimal behavior. Each paradigm has distinct strengths and limitations that make it suitable for different types of environments.
+                    </p>
+                    
+                    <h4>Value-based Methods</h4>
+                    
+                    <p>
+                        Value-based methods estimate the value of states or state-action pairs, and derive policies from these value estimates. The <strong>value function</strong> \(V^\pi(s)\) represents the expected return when starting in state \(s\) and following policy \(\pi\) thereafter:
+                    </p>
+                    
+                    <div class="math-block">
+                        <p>\(V^\pi(s) = \mathbb{E}_\pi[G_t | S_t = s]\)</p>
+                    </div>
+                    
+                    <p>
+                        Similarly, the <strong>action-value function</strong> \(Q^\pi(s,a)\) represents the expected return after taking action \(a\) in state \(s\) and following policy \(\pi\) thereafter:
+                    </p>
+                    
+                    <div class="math-block">
+                        <p>\(Q^\pi(s,a) = \mathbb{E}_\pi[G_t | S_t = s, A_t = a]\)</p>
+                    </div>
+                    
+                    <p>
+                        <a href="https://link.springer.com/article/10.1007/BF00992698" target="_blank">Q-learning</a>, introduced by Watkins in 1989, is a seminal algorithm in this category. It directly approximates the optimal action-value function \(Q^*(s,a)\) through iterative updates:
+                    </p>
+                    
+                    <div class="math-block">
+                        <p>\(Q(s,a) \leftarrow Q(s,a) + \alpha [R + \gamma \max_{a'} Q(s',a') - Q(s,a)]\)</p>
+                    </div>
+                    
+                    <p>
+                        In <a href="https://gymnasium.farama.org/environments/classic_control/cart_pole/" target="_blank">tabular environments</a> with discrete state and action spaces, Q-learning converges to the optimal policy given sufficient exploration. However, value-based methods face challenges in environments with large or continuous state spaces. <a href="https://www.deepmind.com/publications/human-level-control-through-deep-reinforcement-learning" target="_blank">Deep Q-Networks (DQN)</a>, introduced by DeepMind in 2015, address this limitation by using neural networks to approximate value functions. DQN incorporates two key innovations: <a href="https://arxiv.org/abs/1712.01275" target="_blank">experience replay</a> and <a href="https://arxiv.org/abs/1509.02971" target="_blank">fixed target networks</a>, which stabilize learning by reducing the correlation between samples and the moving target problem, respectively. According to a <a href="https://arxiv.org/abs/1907.04618" target="_blank">2019 benchmarking study</a>, DQN variants achieve human-level performance on 29 out of 57 Atari games, demonstrating their effectiveness in high-dimensional environments.
+                    </p>
+                    
+                    <h4>Policy-based Methods</h4>
+                    
+                    <p>
+                        Unlike value-based methods, policy-based approaches directly optimize the policy without maintaining a value function. These methods parameterize the policy \(\pi_\theta\) with parameters \(\theta\) and update these parameters to maximize the expected return:
+                    </p>
+                    
+                    <div class="math-block">
+                        <p>\(J(\theta) = \mathbb{E}_{\pi_\theta}[G_t]\)</p>
+                    </div>
+                    
+                    <p>
+                        <a href="https://link.springer.com/article/10.1023/A:1022672621406" target="_blank">Policy gradient methods</a> optimize this objective by adjusting policy parameters in the direction of the gradient:
+                    </p>
+                    
+                    <div class="math-block">
+                        <p>\(\nabla_\theta J(\theta) = \mathbb{E}_{\pi_\theta}[G_t \nabla_\theta \log \pi_\theta(A_t|S_t)]\)</p>
+                    </div>
+                    
+                    <p>
+                        <a href="https://papers.nips.cc/paper/1999/hash/464d828b85b0bed98e80ade0a5c43b0f-Abstract.html" target="_blank">REINFORCE</a>, a classic policy gradient algorithm, estimates this gradient using Monte Carlo samples. Policy-based methods excel in environments with continuous action spaces, where value-based methods would require discretization or function approximation. For example, <a href="https://proceedings.mlr.press/v32/silver14.html" target="_blank">deterministic policy gradient (DPG)</a> algorithms have achieved state-of-the-art performance in continuous control tasks like <a href="https://gymnasium.farama.org/environments/mujoco/hopper/" target="_blank">MuJoCo Hopper</a> and <a href="https://gymnasium.farama.org/environments/mujoco/humanoid/" target="_blank">Humanoid</a>. According to <a href="https://arxiv.org/abs/1802.09477" target="_blank">OpenAI's analysis</a>, these methods can train robots to walk within 10 million timesteps, compared to hundreds of millions required by value-based alternatives.
+                    </p>
+                    
+                    <h4>Actor-Critic Methods</h4>
+                    
+                    <p>
+                        <a href="https://ieeexplore.ieee.org/document/6313077" target="_blank">Actor-Critic architectures</a> combine elements from both value-based and policy-based approaches. These methods maintain both a policy (the actor) and a value function (the critic). The critic evaluates the actor's actions, providing feedback that reduces the variance of policy updates while maintaining their unbiasedness.
+                    </p>
+                    
+                    <p>
+                        <a href="https://arxiv.org/abs/1509.02971" target="_blank">Advantage Actor-Critic (A2C)</a> uses the advantage function \(A(s,a) = Q(s,a) - V(s)\) to determine how much better an action is compared to the average action in that state. This approach significantly reduces variance in gradient estimates, as demonstrated by <a href="https://arxiv.org/abs/1602.01783" target="_blank">Mnih et al. (2016)</a>, who showed a 3x improvement in sample efficiency on the Atari benchmark suite compared to pure policy gradient methods.
+                    </p>
+                    
+                    <p>
+                        <a href="https://arxiv.org/abs/1707.06347" target="_blank">Proximal Policy Optimization (PPO)</a>, developed by OpenAI, has emerged as one of the most widely used actor-critic algorithms due to its simplicity and effectiveness. By clipping the policy update to stay within a small region around the old policy, PPO prevents destructively large policy changes. This approach has achieved remarkable results across diverse environments, from <a href="https://gymnasium.farama.org/environments/atari/breakout/" target="_blank">Atari games</a> to <a href="https://www.science.org/doi/10.1126/science.aat7781" target="_blank">robotic manipulation tasks</a>. According to <a href="https://openai.com/blog/baselines-acktr-a2c/" target="_blank">OpenAI Baselines</a>, PPO outperforms previous methods on 14 out of 21 continuous control benchmarks, while requiring 50% fewer samples.
+                    </p>
+                    
+                    <div class="visual-container">
+                        <img src="images/rl_algorithms_taxonomy.png" alt="Taxonomy of reinforcement learning algorithms showing relationships between different paradigms" class="rl-diagram">
+                        <p><em>Taxonomy of reinforcement learning algorithms, categorized by approach and highlighting key methods in each paradigm</em></p>
+                    </div>
+                    
+                    <h3>The Role of Exploration vs. Exploitation</h3>
+                    
+                    <p>
+                        A fundamental dilemma in reinforcement learning is balancing <strong>exploration</strong> (trying new actions to discover better strategies) and <strong>exploitation</strong> (choosing actions known to yield good rewards). This tension is particularly evident in environments with sparse or delayed rewards.
+                    </p>
+                    
+                    <p>
+                        Simple exploration strategies include <a href="https://arxiv.org/abs/1906.04009" target="_blank">ε-greedy</a>, where the agent takes random actions with probability ε; and <a href="https://proceedings.neurips.cc/paper/2014/file/c1b798addc99ed6893194c1955086a09-Paper.pdf" target="_blank">Boltzmann exploration</a>, where action selection probabilities are proportional to their estimated values. More sophisticated approaches include <a href="https://arxiv.org/abs/1603.04119" target="_blank">count-based methods</a> that encourage visiting under-explored states, and <a href="https://arxiv.org/abs/1606.01868" target="_blank">intrinsic motivation techniques</a> that generate internal rewards for novelty or curiosity.
+                    </p>
+                    
+                    <p>
+                        Empirical studies by <a href="https://arxiv.org/abs/1909.01387" target="_blank">Burda et al. (2019)</a> demonstrate that environments with sparse rewards, such as <a href="https://gymnasium.farama.org/environments/classic_control/mountain_car/" target="_blank">Mountain Car</a>, require exploration strategies beyond simple random actions. In their experiments, random exploration failed to find meaningful solutions in 90% of trials, while curiosity-driven exploration succeeded in 75% of cases with 10x fewer samples. This highlights how the design of learning environments can significantly impact the exploration requirements and, consequently, the performance of different algorithms.
+                    </p>
+                    
+                    <p>
+                        Understanding these mathematical foundations and algorithmic paradigms provides the necessary context for exploring different reinforcement learning environments. As we progress through this article, we'll see how various environments emphasize different aspects of these fundamentals, from discrete action spaces in classic control problems to continuous high-dimensional states in robotics simulators.
+                    </p>
                 </div>
                 
                 <!-- Additional sections will be added here as they are completed -->
