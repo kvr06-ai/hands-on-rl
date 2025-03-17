@@ -175,9 +175,70 @@
             border-left: 4px solid #3498db;
             overflow-x: auto;
         }
+        #loading {
+            text-align: center;
+            padding: 20px;
+            font-style: italic;
+            color: #666;
+        }
     </style>
     <!-- MathJax for rendering LaTeX-style math equations -->
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>
+        // Function to load article section content
+        function loadArticleSection(sectionId, filename) {
+            const sectionElement = document.getElementById(sectionId);
+            if (!sectionElement) return;
+            
+            // Show loading indicator
+            sectionElement.innerHTML = '<div id="loading">Loading section content...</div>';
+            
+            // Fetch the section content
+            fetch(filename)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.text();
+                })
+                .then(html => {
+                    sectionElement.innerHTML = html;
+                    // Re-run MathJax to render any math in the loaded content
+                    if (window.MathJax) {
+                        MathJax.typeset();
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading section:', error);
+                    sectionElement.innerHTML = `<p>Error loading section content. Please try refreshing the page.</p>`;
+                });
+        }
+        
+        // Function to initialize section content loading
+        function initArticle() {
+            // Load section content when the page is loaded
+            loadArticleSection('section-1', 'article_sections/article_section_1.html');
+            loadArticleSection('section-2', 'article_sections/article_section_2.html');
+            loadArticleSection('section-3', 'article_sections/section_3.html');
+            loadArticleSection('section-4', 'article_sections/section_4.html');
+            
+            // Handle navigation clicks
+            document.querySelectorAll('nav a').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    // Remove current-section class from all links
+                    document.querySelectorAll('nav a').forEach(l => {
+                        l.classList.remove('current-section');
+                    });
+                    
+                    // Add current-section class to clicked link
+                    this.classList.add('current-section');
+                });
+            });
+        }
+        
+        // Initialize when the DOM is fully loaded
+        document.addEventListener('DOMContentLoaded', initArticle);
+    </script>
 </head>
 <body>
     <div class="container">
@@ -187,8 +248,8 @@
                 <ul>
                     <li><a href="#section-1">1. Introduction</a></li>
                     <li><a href="#section-2">2. RL Fundamentals</a></li>
-                    <li><a href="#section-3" class="current-section">3. Classic Benchmarks</a></li>
-                    <li><a href="#section-4">4. Atari Learning</a></li>
+                    <li><a href="#section-3">3. Classic Benchmarks</a></li>
+                    <li><a href="#section-4" class="current-section">4. Atari Learning</a></li>
                     <li><a href="#section-5">5. Continuous Control</a></li>
                     <li><a href="#section-6">6. MuJoCo Physics</a></li>
                     <li><a href="#section-7">7. Multi-Agent Environments</a></li>
@@ -210,384 +271,25 @@
             <main id="article-content">
                 <!-- Section 1: Introduction -->
                 <div id="section-1" class="article-section">
-                    <h2>1. Introduction: The Simulation Frontier of AI</h2>
-                    
-                    <blockquote>
-                        "How do we teach AI to walk before it can run? Through carefully designed virtual playgrounds that challenge and shape machine intelligence."
-                    </blockquote>
-                    
-                    <!-- Visual Hook -->
-                    <div class="visual-container">
-                        <img src="images/rl_cycle.gif" alt="Reinforcement Learning Agent-Environment Interaction Loop" class="rl-diagram">
-                        <p><em>Reinforcement Learning cycle: agent interacts with environment through actions, receives states and rewards</em></p>
-                    </div>
-                    
-                    <p>
-                        <a href="https://en.wikipedia.org/wiki/Reinforcement_learning" target="_blank">Reinforcement Learning (RL)</a> represents one of the most promising frontiers in artificial intelligence, enabling machines to learn optimal behavior through interaction with their environment. Unlike <a href="https://en.wikipedia.org/wiki/Supervised_learning" target="_blank">supervised learning</a>, which requires labeled examples, RL agents learn from direct experience and feedback. This paradigm has led to breakthroughs like <a href="https://www.deepmind.com/research/highlighted-research/alphago" target="_blank">AlphaGo</a> defeating world champions and <a href="https://www.science.org/doi/10.1126/scirobotics.aaw6326" target="_blank">robots that can perform complex manipulation tasks</a>. However, the path to these achievements is paved with carefully designed <a href="https://spinningup.openai.com/en/latest/spinningup/rl_intro.html#what-can-rl-do" target="_blank">simulation environments</a> that act as both training grounds and benchmarks.
-                    </p>
-                    
-                    <p>
-                        At the core of reinforcement learning lie three fundamental challenges that every algorithm must overcome. First, <strong><a href="https://lilianweng.github.io/posts/2020-06-07-exploration-drl/" target="_blank">exploration</a></strong> requires agents to discover effective strategies in vast state spaces where random actions are unlikely to yield success. According to a <a href="https://arxiv.org/abs/2102.06587" target="_blank">2021 study by OpenAI</a>, efficient exploration remains one of the biggest bottlenecks in applying RL to real-world problems, with random exploration becoming exponentially less effective as task complexity increases. Second, <strong><a href="https://en.wikipedia.org/wiki/Temporal_difference_learning" target="_blank">credit assignment</a></strong> involves determining which actions in a sequence contributed to eventual success or failure, especially when rewards are delayed. Third, <strong><a href="https://arxiv.org/abs/1810.12282" target="_blank">generalization</a></strong> challenges agents to apply learned policies to novel situations—a capability that humans excel at but machines struggle with. Data from <a href="https://arxiv.org/abs/1901.07927" target="_blank">DeepMind</a> shows that even state-of-the-art RL agents often fail dramatically when faced with small variations in their environment.
-                    </p>
-                    
-                    <p>
-                        Environments in reinforcement learning serve a dual purpose that makes them critically important. As Stanford professor <a href="https://cs.stanford.edu/people/ebrun/" target="_blank">Emma Brunskill</a> notes, "The right environment is both a teacher and a test, revealing an algorithm's true capabilities and limitations." On one hand, they provide the structured <a href="https://arxiv.org/abs/1709.10089" target="_blank">feedback necessary for agents to learn</a>, with reward functions that shape behavior toward desired goals. On the other hand, they establish standardized challenges that allow researchers to <a href="https://paperswithcode.com/area/reinforcement-learning" target="_blank">benchmark algorithms against each other</a>. The <a href="https://www.gymlibrary.dev/" target="_blank">Gymnasium library</a> (formerly OpenAI Gym) exemplifies this approach, offering a collection of environments with <a href="https://gymnasium.farama.org/api/env/" target="_blank">consistent interfaces</a> that have become the de facto standard for RL research. Since its introduction in 2016, papers referencing Gym/Gymnasium environments have increased by 300% according to <a href="https://arxiv.org/search/advanced?advanced=&terms-0-operator=AND&terms-0-term=openai+gym&terms-0-field=all&classification-physics_archives=all&classification-include_cross_list=include&date-filter_by=all_dates&date-year=&date-from_date=&date-to_date=&date-date_type=submitted_date&abstracts=show&size=50&order=-announced_date_first" target="_blank">arXiv statistics</a>, highlighting the community's recognition of standardized benchmarks as essential for meaningful progress.
-                    </p>
-                    
-                    <p>
-                        Our journey through reinforcement learning environments will take us from simple physics simulations like <a href="https://gymnasium.farama.org/environments/classic_control/cart_pole/" target="_blank">CartPole</a>, where a pole must be balanced on a movable cart, to complex robotics simulators like <a href="https://mujoco.org/" target="_blank">MuJoCo</a> that model realistic physical interactions. Along the way, we'll explore how the evolution of these environments has driven algorithmic innovation and expanded the capabilities of artificial intelligence. The <a href="https://github.com/mgbellemare/Arcade-Learning-Environment" target="_blank">Arcade Learning Environment</a>, for instance, pushed researchers to develop algorithms that could learn directly from high-dimensional pixel inputs, leading to the birth of <a href="https://www.deepmind.com/publications/playing-atari-with-deep-reinforcement-learning" target="_blank">deep reinforcement learning with DQN</a> in 2013. Similarly, continuous control environments spurred the development of <a href="https://spinningup.openai.com/en/latest/algorithms/ppo.html" target="_blank">policy gradient methods</a> capable of handling large, continuous action spaces. By understanding these environments, we gain insight not just into how machines learn but also into the fundamental nature of intelligence itself.
-                    </p>
+                    <!-- Content will be loaded via JavaScript -->
                 </div>
                 
                 <!-- Section 2: RL Fundamentals -->
                 <div id="section-2" class="article-section">
-                    <h2>2. Reinforcement Learning Fundamentals: A Technical Primer</h2>
-                    
-                    <p>
-                        To understand reinforcement learning environments, we must first establish the mathematical framework that underpins RL algorithms. This section provides the technical foundation necessary to appreciate how different environments challenge learning agents and why certain algorithms excel in specific scenarios.
-                    </p>
-                    
-                    <h3>The RL Framework: Mathematical Foundations</h3>
-                    
-                    <p>
-                        At its core, reinforcement learning is formalized through <a href="https://en.wikipedia.org/wiki/Markov_decision_process" target="_blank">Markov Decision Processes</a> (MDPs), a mathematical framework for modeling decision-making in situations where outcomes are partly random and partly under the control of a decision-maker. An MDP is defined by the tuple \((S, A, P, R, \gamma)\), where:
-                    </p>
-                    
-                    <ul>
-                        <li>\(S\) represents the <strong>state space</strong>, the set of all possible situations our agent might encounter</li>
-                        <li>\(A\) is the <strong>action space</strong>, the collection of possible actions available to the agent</li>
-                        <li>\(P: S \times A \times S \rightarrow [0, 1]\) defines the <strong>transition probability function</strong>, where \(P(s'|s,a)\) gives the probability of transitioning to state \(s'\) from state \(s\) after taking action \(a\)</li>
-                        <li>\(R: S \times A \times S \rightarrow \mathbb{R}\) is the <strong>reward function</strong>, where \(R(s,a,s')\) provides the immediate reward after transitioning from \(s\) to \(s'\) due to action \(a\)</li>
-                        <li>\(\gamma \in [0, 1]\) is the <strong>discount factor</strong> that determines how much the agent values future rewards compared to immediate ones</li>
-                    </ul>
-                    
-                    <p>
-                        The <a href="https://proceedings.neurips.cc/paper_files/paper/2020/file/29c0c0ee746257fa275995c063d11072-Paper.pdf" target="_blank">Markov property</a> is central to this framework, asserting that the current state contains all relevant information from the history—the future is conditionally independent of the past given the present. In practical terms, this means the probability of transitioning to a new state depends only on the current state and action, not on the sequence of states and actions that preceded it. According to a comprehensive analysis by <a href="https://arxiv.org/abs/2111.00997" target="_blank">Silver et al. (2021)</a>, real-world RL problems frequently violate this assumption, necessitating techniques like recurrent neural networks to capture historical information when the Markov property doesn't hold.
-                    </p>
-                    
-                    <div class="visual-container">
-                        <img src="images/mdp_diagram.png" alt="Markov Decision Process diagram showing states, actions, transitions, and rewards" class="rl-diagram">
-                        <p><em>Markov Decision Process diagram illustrating states (circles), actions (arrows), transitions (connections between states), and rewards (numbers)</em></p>
-                    </div>
-                    
-                    <p>
-                        The objective in reinforcement learning is to find an optimal <strong>policy</strong> \(\pi: S \rightarrow A\), a mapping from states to actions that maximizes the <strong>expected return</strong>. The expected return is defined as the sum of discounted future rewards:
-                    </p>
-                    
-                    <div class="math-block">
-                        <p>\(G_t = R_{t+1} + \gamma R_{t+2} + \gamma^2 R_{t+3} + ... = \sum_{k=0}^{\infty} \gamma^k R_{t+k+1}\)</p>
-                    </div>
-                    
-                    <p>
-                        The discount factor \(\gamma\) serves a dual purpose. Mathematically, it ensures the infinite sum converges to a finite value when rewards are bounded. Conceptually, it represents a preference for immediate rewards over delayed ones—a property observed in both human and animal decision-making, as documented in <a href="https://pubmed.ncbi.nlm.nih.gov/19454975/" target="_blank">behavioral economics research</a>. In a parametric study of 60 RL benchmarks conducted by <a href="https://arxiv.org/abs/1812.06110" target="_blank">Fedus et al. (2019)</a>, performance varies dramatically with different discount factors, with optimal values typically falling between 0.95 and 0.99 for most environments.
-                    </p>
-                    
-                    <h3>Key RL Paradigms</h3>
-                    
-                    <p>
-                        Reinforcement learning algorithms can be categorized into several paradigms based on their approach to learning optimal behavior. Each paradigm has distinct strengths and limitations that make it suitable for different types of environments.
-                    </p>
-                    
-                    <h4>Value-based Methods</h4>
-                    
-                    <p>
-                        Value-based methods estimate the value of states or state-action pairs, and derive policies from these value estimates. The <strong>value function</strong> \(V^\pi(s)\) represents the expected return when starting in state \(s\) and following policy \(\pi\) thereafter:
-                    </p>
-                    
-                    <div class="math-block">
-                        <p>\(V^\pi(s) = \mathbb{E}_\pi[G_t | S_t = s]\)</p>
-                    </div>
-                    
-                    <p>
-                        Similarly, the <strong>action-value function</strong> \(Q^\pi(s,a)\) represents the expected return after taking action \(a\) in state \(s\) and following policy \(\pi\) thereafter:
-                    </p>
-                    
-                    <div class="math-block">
-                        <p>\(Q^\pi(s,a) = \mathbb{E}_\pi[G_t | S_t = s, A_t = a]\)</p>
-                    </div>
-                    
-                    <p>
-                        <a href="https://link.springer.com/article/10.1007/BF00992698" target="_blank">Q-learning</a>, introduced by Watkins in 1989, is a seminal algorithm in this category. It directly approximates the optimal action-value function \(Q^*(s,a)\) through iterative updates:
-                    </p>
-                    
-                    <div class="math-block">
-                        <p>\(Q(s,a) \leftarrow Q(s,a) + \alpha [R + \gamma \max_{a'} Q(s',a') - Q(s,a)]\)</p>
-                    </div>
-                    
-                    <p>
-                        In <a href="https://gymnasium.farama.org/environments/classic_control/cart_pole/" target="_blank">tabular environments</a> with discrete state and action spaces, Q-learning converges to the optimal policy given sufficient exploration. However, value-based methods face challenges in environments with large or continuous state spaces. <a href="https://www.deepmind.com/publications/human-level-control-through-deep-reinforcement-learning" target="_blank">Deep Q-Networks (DQN)</a>, introduced by DeepMind in 2015, address this limitation by using neural networks to approximate value functions. DQN incorporates two key innovations: <a href="https://arxiv.org/abs/1712.01275" target="_blank">experience replay</a> and <a href="https://arxiv.org/abs/1509.02971" target="_blank">fixed target networks</a>, which stabilize learning by reducing the correlation between samples and the moving target problem, respectively. According to a <a href="https://arxiv.org/abs/1907.04618" target="_blank">2019 benchmarking study</a>, DQN variants achieve human-level performance on 29 out of 57 Atari games, demonstrating their effectiveness in high-dimensional environments.
-                    </p>
-                    
-                    <h4>Policy-based Methods</h4>
-                    
-                    <p>
-                        Unlike value-based methods, policy-based approaches directly optimize the policy without maintaining a value function. These methods parameterize the policy \(\pi_\theta\) with parameters \(\theta\) and update these parameters to maximize the expected return:
-                    </p>
-                    
-                    <div class="math-block">
-                        <p>\(J(\theta) = \mathbb{E}_{\pi_\theta}[G_t]\)</p>
-                    </div>
-                    
-                    <p>
-                        <a href="https://link.springer.com/article/10.1023/A:1022672621406" target="_blank">Policy gradient methods</a> optimize this objective by adjusting policy parameters in the direction of the gradient:
-                    </p>
-                    
-                    <div class="math-block">
-                        <p>\(\nabla_\theta J(\theta) = \mathbb{E}_{\pi_\theta}[G_t \nabla_\theta \log \pi_\theta(A_t|S_t)]\)</p>
-                    </div>
-                    
-                    <p>
-                        <a href="https://papers.nips.cc/paper/1999/hash/464d828b85b0bed98e80ade0a5c43b0f-Abstract.html" target="_blank">REINFORCE</a>, a classic policy gradient algorithm, estimates this gradient using Monte Carlo samples. Policy-based methods excel in environments with continuous action spaces, where value-based methods would require discretization or function approximation. For example, <a href="https://proceedings.mlr.press/v32/silver14.html" target="_blank">deterministic policy gradient (DPG)</a> algorithms have achieved state-of-the-art performance in continuous control tasks like <a href="https://gymnasium.farama.org/environments/mujoco/hopper/" target="_blank">MuJoCo Hopper</a> and <a href="https://gymnasium.farama.org/environments/mujoco/humanoid/" target="_blank">Humanoid</a>. According to <a href="https://arxiv.org/abs/1802.09477" target="_blank">OpenAI's analysis</a>, these methods can train robots to walk within 10 million timesteps, compared to hundreds of millions required by value-based alternatives.
-                    </p>
-                    
-                    <h4>Actor-Critic Methods</h4>
-                    
-                    <p>
-                        <a href="https://ieeexplore.ieee.org/document/6313077" target="_blank">Actor-Critic architectures</a> combine elements from both value-based and policy-based approaches. These methods maintain both a policy (the actor) and a value function (the critic). The critic evaluates the actor's actions, providing feedback that reduces the variance of policy updates while maintaining their unbiasedness.
-                    </p>
-                    
-                    <p>
-                        <a href="https://arxiv.org/abs/1509.02971" target="_blank">Advantage Actor-Critic (A2C)</a> uses the advantage function \(A(s,a) = Q(s,a) - V(s)\) to determine how much better an action is compared to the average action in that state. This approach significantly reduces variance in gradient estimates, as demonstrated by <a href="https://arxiv.org/abs/1602.01783" target="_blank">Mnih et al. (2016)</a>, who showed a 3x improvement in sample efficiency on the Atari benchmark suite compared to pure policy gradient methods.
-                    </p>
-                    
-                    <p>
-                        <a href="https://arxiv.org/abs/1707.06347" target="_blank">Proximal Policy Optimization (PPO)</a>, developed by OpenAI, has emerged as one of the most widely used actor-critic algorithms due to its simplicity and effectiveness. By clipping the policy update to stay within a small region around the old policy, PPO prevents destructively large policy changes. This approach has achieved remarkable results across diverse environments, from <a href="https://gymnasium.farama.org/environments/atari/breakout/" target="_blank">Atari games</a> to <a href="https://www.science.org/doi/10.1126/science.aat7781" target="_blank">robotic manipulation tasks</a>. According to <a href="https://openai.com/blog/baselines-acktr-a2c/" target="_blank">OpenAI Baselines</a>, PPO outperforms previous methods on 14 out of 21 continuous control benchmarks, while requiring 50% fewer samples.
-                    </p>
-                    
-                    <div class="visual-container">
-                        <img src="images/rl_algorithms_taxonomy.png" alt="Taxonomy of reinforcement learning algorithms showing relationships between different paradigms" class="rl-diagram">
-                        <p><em>Taxonomy of reinforcement learning algorithms, categorized by approach and highlighting key methods in each paradigm</em></p>
-                    </div>
-                    
-                    <h3>The Role of Exploration vs. Exploitation</h3>
-                    
-                    <p>
-                        A fundamental dilemma in reinforcement learning is balancing <strong>exploration</strong> (trying new actions to discover better strategies) and <strong>exploitation</strong> (choosing actions known to yield good rewards). This tension is particularly evident in environments with sparse or delayed rewards.
-                    </p>
-                    
-                    <p>
-                        Simple exploration strategies include <a href="https://arxiv.org/abs/1906.04009" target="_blank">ε-greedy</a>, where the agent takes random actions with probability ε; and <a href="https://proceedings.neurips.cc/paper/2014/file/c1b798addc99ed6893194c1955086a09-Paper.pdf" target="_blank">Boltzmann exploration</a>, where action selection probabilities are proportional to their estimated values. More sophisticated approaches include <a href="https://arxiv.org/abs/1603.04119" target="_blank">count-based methods</a> that encourage visiting under-explored states, and <a href="https://arxiv.org/abs/1606.01868" target="_blank">intrinsic motivation techniques</a> that generate internal rewards for novelty or curiosity.
-                    </p>
-                    
-                    <p>
-                        Empirical studies by <a href="https://arxiv.org/abs/1909.01387" target="_blank">Burda et al. (2019)</a> demonstrate that environments with sparse rewards, such as <a href="https://gymnasium.farama.org/environments/classic_control/mountain_car/" target="_blank">Mountain Car</a>, require exploration strategies beyond simple random actions. In their experiments, random exploration failed to find meaningful solutions in 90% of trials, while curiosity-driven exploration succeeded in 75% of cases with 10x fewer samples. This highlights how the design of learning environments can significantly impact the exploration requirements and, consequently, the performance of different algorithms.
-                    </p>
-                    
-                    <p>
-                        Understanding these mathematical foundations and algorithmic paradigms provides the necessary context for exploring different reinforcement learning environments. As we progress through this article, we'll see how various environments emphasize different aspects of these fundamentals, from discrete action spaces in classic control problems to continuous high-dimensional states in robotics simulators.
-                    </p>
+                    <!-- Content will be loaded via JavaScript -->
                 </div>
                 
                 <!-- Section 3: Classic Benchmarks -->
                 <div id="section-3" class="article-section">
-                    <h2>3. The Classic Benchmarks: CartPole and Beyond</h2>
-                    
-                    <blockquote>
-                        "Before tackling complex environments, one must master the fundamentals. Classic control problems provide the perfect sandbox for understanding core RL principles with minimal computational overhead."
-                    </blockquote>
-                    
-                    <p>
-                        Classic control problems form the bedrock of reinforcement learning experimentation. These environments strike an ideal balance: simple enough to understand intuitively, yet complex enough to challenge naive solutions. According to <a href="https://arxiv.org/abs/1811.08130" target="_blank">Henderson et al. (2018)</a>, even state-of-the-art algorithms exhibit significant variance on these seemingly simple tasks, making them valuable testbeds for algorithm development. In this section, we'll explore the most important classic benchmarks, their characteristics, and what makes them enduring starting points for RL practitioners.
-                    </p>
-                    
-                    <h3>CartPole: The "Hello World" of Reinforcement Learning</h3>
-                    
-                    <div class="visual-container">
-                        <img src="images/cartpole.gif" alt="CartPole environment animation showing a pole balancing on a moving cart" class="rl-diagram">
-                        <p><em>The CartPole environment: an agent must apply left or right forces to keep the pole balanced</em></p>
-                    </div>
-                    
-                    <p>
-                        <a href="https://gymnasium.farama.org/environments/classic_control/cart_pole/" target="_blank">CartPole</a> represents the quintessential starting point for reinforcement learning, analogous to the "Hello World" program in traditional programming. The task involves balancing a pole attached to a cart that moves along a frictionless track. The system is controlled by applying forces of fixed magnitude to the cart, pushing it left or right. Originally described by <a href="https://ieeexplore.ieee.org/document/6313077" target="_blank">Barto, Sutton, and Anderson (1983)</a>, this problem embodies fundamental control theory challenges while remaining accessible to new learners.
-                    </p>
-                    
-                    <p>
-                        The environment is defined by the following components:
-                    </p>
-                    
-                    <ul>
-                        <li><strong>State space (4 dimensions)</strong>: Cart position, cart velocity, pole angle, and pole angular velocity</li>
-                        <li><strong>Action space (discrete, 2 actions)</strong>: Push the cart left (0) or right (1)</li>
-                        <li><strong>Reward function</strong>: +1 for every timestep the pole remains upright</li>
-                        <li><strong>Termination conditions</strong>: Pole angle exceeds ±12°, cart position exceeds ±2.4 units, or 500 timesteps elapse</li>
-                    </ul>
-                    
-                    <p>
-                        What makes CartPole particularly valuable as a benchmark is its clear success criteria—an episode length of 500 timesteps indicates the task has been solved—and the fact that many algorithms can achieve this benchmark with minimal tuning. A <a href="https://arxiv.org/abs/1709.06560" target="_blank">2017 study by Islam et al.</a> demonstrated that simple policy gradient methods can solve CartPole in fewer than 1,000 total environment interactions, while value-based methods like DQN typically require 10,000-20,000 interactions. This makes it an excellent environment for rapid prototyping and algorithm comparison.
-                    </p>
-                    
-                    <div class="code-example">
-                        <h4>Minimal CartPole Example</h4>
-                        <pre><code>import gymnasium as gym
-import numpy as np
-
-env = gym.make('CartPole-v1')
-observation, info = env.reset(seed=42)
-
-# Simple policy: push cart in direction of pole's lean
-episodes = 5
-for episode in range(episodes):
-    observation, info = env.reset()
-    total_reward = 0
-    
-    for t in range(500):
-        # Simple heuristic: push cart in direction of pole's lean
-        # pole_angle = observation[2]
-        # action = 0 if pole_angle < 0 else 1
-        
-        # Or use random actions
-        action = env.action_space.sample()
-        
-        observation, reward, terminated, truncated, info = env.step(action)
-        total_reward += reward
-        
-        if terminated or truncated:
-            break
-            
-    print(f"Episode {episode+1}: reward = {total_reward}")</code></pre>
-                    </div>
-                    
-                    <h3>Mountain Car: Overcoming Sparse Rewards</h3>
-                    
-                    <div class="visual-container">
-                        <img src="images/mountain_car.gif" alt="Mountain Car environment showing a car trying to climb a steep hill" class="rl-diagram">
-                        <p><em>The Mountain Car environment: an underpowered car must learn to oscillate to build momentum and reach the goal</em></p>
-                    </div>
-                    
-                    <p>
-                        <a href="https://gymnasium.farama.org/environments/classic_control/mountain_car/" target="_blank">Mountain Car</a> presents a different challenge from CartPole, highlighting the exploration problem in reinforcement learning. In this environment, an underpowered car must escape a valley by building enough momentum to reach the top of a hill. Since the car's engine is too weak to climb the slope directly, the agent must learn to oscillate back and forth to build sufficient momentum—a solution that requires planning and exploration beyond greedy, reward-seeking behavior.
-                    </p>
-                    
-                    <p>
-                        The key components of the Mountain Car environment are:
-                    </p>
-                    
-                    <ul>
-                        <li><strong>State space (2 dimensions)</strong>: Car position (-1.2 to 0.6) and velocity (-0.07 to 0.07)</li>
-                        <li><strong>Action space (discrete, 3 actions)</strong>: Push left (0), no push (1), or push right (2)</li>
-                        <li><strong>Reward function</strong>: -1 per timestep until the goal is reached (sparse reward)</li>
-                        <li><strong>Termination conditions</strong>: Car position exceeds 0.5 (goal reached) or 200 timesteps elapse</li>
-                    </ul>
-                    
-                    <p>
-                        What makes Mountain Car particularly instructive is its sparse reward structure. According to <a href="https://arxiv.org/abs/1606.01868" target="_blank">Bellemare et al. (2016)</a>, naive exploration strategies like ε-greedy often fail in this environment because random actions rarely lead to the goal. This creates a cycle where the agent never experiences success and thus cannot learn from it. Research by <a href="https://arxiv.org/abs/1810.12894" target="_blank">Burda et al. (2018)</a> showed that intrinsic motivation techniques—which generate additional "curiosity-based" rewards—can overcome this limitation, enabling agents to solve Mountain Car 10 times faster than with standard methods.
-                    </p>
-                    
-                    <h3>Acrobot: The Complexity of Control</h3>
-                    
-                    <p>
-                        <a href="https://gymnasium.farama.org/environments/classic_control/acrobot/" target="_blank">Acrobot</a> resembles a gymnast on a high bar, with the goal of swinging the "feet" above a certain height. Originally described by <a href="https://ieeexplore.ieee.org/document/155375" target="_blank">Sutton (1996)</a>, this double-pendulum system increases the complexity of control compared to CartPole's single inverted pendulum. The agent controls torque at the joint between the two links, making the dynamics considerably more challenging due to the nonlinear interactions between the components.
-                    </p>
-                    
-                    <p>
-                        The environment specifications include:
-                    </p>
-                    
-                    <ul>
-                        <li><strong>State space (6 dimensions)</strong>: Angles and angular velocities of both links</li>
-                        <li><strong>Action space (discrete, 3 actions)</strong>: Apply positive torque, no torque, or negative torque to the joint</li>
-                        <li><strong>Reward function</strong>: -1 per timestep until the task is completed</li>
-                        <li><strong>Termination conditions</strong>: Second link's end reaches a height of 1.0 above the joint, or 500 timesteps elapse</li>
-                    </ul>
-                    
-                    <p>
-                        Acrobot exemplifies the "bang-bang control" problem common in engineering, where optimal solutions often involve applying maximum torque in one direction, then the opposite. A <a href="https://arxiv.org/abs/1707.06347" target="_blank">comparative study by Schulman et al. (2017)</a> demonstrated that while value-based methods struggle with Acrobot's dynamics, policy gradient approaches like PPO can learn robust solutions within 100,000 timesteps, highlighting the importance of matching algorithm characteristics to environment dynamics.
-                    </p>
-                    
-                    <h3>Pendulum: Introduction to Continuous Control</h3>
-                    
-                    <p>
-                        The <a href="https://gymnasium.farama.org/environments/classic_control/pendulum/" target="_blank">Pendulum</a> environment bridges the gap between discrete and continuous control problems. Unlike the previous environments with discrete action spaces, Pendulum requires the agent to apply a continuous torque value to swing up and balance an inverted pendulum. This continuous action space introduces new challenges for reinforcement learning algorithms, necessitating different approaches than those used for discrete problems.
-                    </p>
-                    
-                    <p>
-                        The environment details are:
-                    </p>
-                    
-                    <ul>
-                        <li><strong>State space (3 dimensions)</strong>: Pendulum angle (sin and cos components for continuity) and angular velocity</li>
-                        <li><strong>Action space (continuous, 1 dimension)</strong>: Torque between -2.0 and 2.0</li>
-                        <li><strong>Reward function</strong>: Negative cost based on angle from vertical, angular velocity, and action magnitude</li>
-                        <li><strong>Termination conditions</strong>: 200 timesteps elapse (no early termination)</li>
-                    </ul>
-                    
-                    <p>
-                        Pendulum serves as a critical stepping stone to more complex continuous control tasks like robotics. According to <a href="https://proceedings.mlr.press/v32/silver14.html" target="_blank">Silver et al. (2014)</a>, algorithms that perform well on Pendulum often generalize effectively to higher-dimensional control problems. Their research showed that Deterministic Policy Gradient (DPG) algorithms achieve significantly better sample efficiency on continuous control tasks compared to stochastic policy gradient methods, a finding later reinforced by <a href="https://arxiv.org/abs/1509.02971" target="_blank">Lillicrap et al. (2015)</a> with the introduction of Deep Deterministic Policy Gradient (DDPG).
-                    </p>
-                    
-                    <h3>Comparison and Benchmarking</h3>
-                    
-                    <p>
-                        These classic control environments form a progression of complexity that systematically challenges different aspects of reinforcement learning. An extensive study by <a href="https://arxiv.org/abs/1801.07917" target="_blank">Petroski Such et al. (2018)</a> benchmarked 16 different RL algorithms across these environments, revealing important patterns:
-                    </p>
-                    
-                    <div class="comparison-table">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Environment</th>
-                                    <th>Key Challenge</th>
-                                    <th>Best Performing Algorithms</th>
-                                    <th>Sample Efficiency</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td><strong>CartPole</strong></td>
-                                    <td>Basic stabilization</td>
-                                    <td>DQN, A2C, TRPO</td>
-                                    <td>10-20K steps</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Mountain Car</strong></td>
-                                    <td>Exploration, sparse rewards</td>
-                                    <td>DQN with intrinsic motivation, PPO</td>
-                                    <td>100-200K steps</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Acrobot</strong></td>
-                                    <td>Complex dynamics</td>
-                                    <td>PPO, TRPO</td>
-                                    <td>50-100K steps</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Pendulum</strong></td>
-                                    <td>Continuous control</td>
-                                    <td>DDPG, SAC, TD3</td>
-                                    <td>30-50K steps</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    
-                    <p>
-                        The data reveals a clear trend: value-based methods (like DQN) excel in environments with discrete action spaces and clear reward signals (CartPole), while policy gradient methods (like PPO) demonstrate superior performance in environments with complex dynamics (Acrobot) or sparse rewards (Mountain Car). For continuous control (Pendulum), actor-critic architectures with deterministic policies (DDPG, TD3) show the best results. This pattern continues to hold in more complex domains, making these classic benchmarks valuable predictors of algorithm performance on larger-scale problems.
-                    </p>
-                    
-                    <h3>Implementation Tips and Common Pitfalls</h3>
-                    
-                    <p>
-                        Despite their relative simplicity, these classic control environments can still present challenges during implementation. Based on the experiences documented in <a href="https://spinningup.openai.com/en/latest/spinningup/rl_tips_and_tricks.html" target="_blank">OpenAI's Spinning Up</a> and <a href="https://arxiv.org/abs/1709.06560" target="_blank">Islam et al. (2017)</a>, here are key considerations when working with these environments:
-                    </p>
-                    
-                    <ul>
-                        <li><strong>State Normalization</strong>: Standardizing state variables to have zero mean and unit variance significantly improves learning stability, especially for neural network function approximators.</li>
-                        <li><strong>Reward Scaling</strong>: For Mountain Car and Acrobot, where rewards are consistently negative, scaling rewards to a smaller magnitude (e.g., dividing by 100) can prevent numerical instability in value function estimation.</li>
-                        <li><strong>Hyperparameter Sensitivity</strong>: CartPole is notably less sensitive to hyperparameters than other environments. If an algorithm fails on CartPole, it likely indicates a fundamental implementation issue rather than poor tuning.</li>
-                        <li><strong>Reproducibility</strong>: Using fixed random seeds is essential for consistent results, as performance can vary significantly between runs due to the stochastic nature of both the learning algorithm and, in some cases, the environment dynamics.</li>
-                        <li><strong>Overtraining</strong>: Especially in Mountain Car, algorithms can develop brittle solutions that succeed under specific conditions but fail with small perturbations. Regular evaluation in slightly varied conditions helps ensure robust policies.</li>
-                    </ul>
-                    
-                    <p>
-                        As reinforcement learning continues to advance, these classic control problems remain invaluable tools for algorithm development and benchmarking. Their clear objectives, well-understood dynamics, and low computational requirements make them ideal for rapid experimentation and hypothesis testing. By mastering these fundamental environments, researchers can build intuition that generalizes to more complex domains like Atari games, robotics, and real-world applications.
-                    </p>
-                    
-                    <p>
-                        In the next section, we'll explore how the principles learned from classic control problems extend to the Atari Learning Environment, where agents must learn directly from high-dimensional pixel observations—a significant step toward real-world visual perception and decision-making.
-                    </p>
+                    <!-- Content will be loaded via JavaScript -->
                 </div>
                 
-                <!-- Additional sections will be added here as they are completed -->
+                <!-- Section 4: Atari Learning Environment -->
+                <div id="section-4" class="article-section">
+                    <!-- Content will be loaded via JavaScript -->
+                </div>
+                
+                <!-- More sections will be added here as they are completed -->
             </main>
             
             <footer>
