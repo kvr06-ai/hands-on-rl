@@ -1,6 +1,6 @@
 # Hands-on Reinforcement Learning
 
-A comprehensive, interactive guide to reinforcement learning environments, from simple benchmarks like CartPole to complex physics simulations with MuJoCo and beyond.
+A comprehensive, interactive guide to reinforcement learning environments, from simple benchmarks like CartPole to complex physics simulations with MuJoCo and beyond. You can read the entire article on my website: https://kaushikrajan.me/blog/reinforcement-learning/
 
 ## Project Overview
 
